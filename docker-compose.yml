@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:15
+    container_name: population_db
+    environment:
+      POSTGRES_DB: population
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  get_data:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_URL: postgresql+psycopg2://user:password@db:5432/population
+    command: >
+      sh -c "
+      python -m app.create_tables &&
+      python -m app.commands.fetch_data
+      "
+
+  print_data:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_URL: postgresql+psycopg2://user:password@db:5432/population
+    command: python -m app.commands.print_data
+
+volumes:
+  pgdata:
