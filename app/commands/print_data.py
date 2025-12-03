@@ -6,9 +6,7 @@ class PrintDataCommand:
         self.repo = CountryRepository()
 
     def run(self):
-
         rows = self.repo.get_region_stats()
-        print("DEBUG rows:", rows)
 
         for (
             region,
